@@ -22,6 +22,21 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+    @classmethod
+    def get_navs(cls):
+        categorys = cls.objects.filter(status=cls.STATUS_NORMAL)
+        nav_categorys = []
+        normal_categorys = []
+        for cate in categorys:
+            if cate.is_nav:
+                nav_categorys.append(cate)
+            else:
+                normal_categorys.append(cate)
+        return {
+            'navs': nav_categorys,
+            'categorys': normal_categorys
+        }
+
 
 class Tag(models.Model):
     STATUS_NORMAL = 1
@@ -58,6 +73,8 @@ class Post(models.Model):
     category = models.ForeignKey(Category, verbose_name="分类", on_delete=models.CASCADE)
     tag = models.ForeignKey(Tag, verbose_name="标签", on_delete=models.CASCADE)
     owner = models.ForeignKey(User, verbose_name="作者", on_delete=models.CASCADE)
+    pv = models.PositiveIntegerField(default=1)
+    uv = models.PositiveIntegerField(default=1)
     created_time = models.DateTimeField(auto_now_add=True, verbose_name="创建时间", editable=False)
 
     class Meta:
@@ -66,3 +83,35 @@ class Post(models.Model):
 
     def __str__(self):
         return self.title
+
+    @staticmethod
+    def get_by_tag(tag_id):
+        """ 将view模型的内容 存入到模型中处理 """
+        try:
+            tag = Tag.objects.get(id=tag_id)
+        except Tag.DoesNotExist:
+            post_list = []
+            tag = None
+        else:
+            post_list = tag.post_set.filter(status=Post.STATUS_NORMAL).select_related('owner', 'category')
+        return post_list, tag
+
+    @staticmethod
+    def get_by_category(category_id):
+        try:
+            category = Category.objects.get(id=category_id)
+        except Category.DoesNotExist:
+            category = None
+            post_list = []
+        else:
+            post_list = category.post_set.filter(status=Post.STATUS_NORMAL).select_related('owner', 'category')
+        return post_list, category
+    
+    @classmethod
+    def latest_posts(cls):
+        queryset = cls.objects.filter(status=cls.STATUS_NORMAL)
+        return queryset
+
+    @classmethod
+    def hot_posts(cls):
+        return cls.objects.filter(status=cls.STATUS_NORMAL).order_by('-pv')

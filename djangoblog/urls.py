@@ -15,13 +15,19 @@ Including another URLconf
 """
 from django.contrib import admin
 from .custom_site import custom_site
-from django.urls import path
+from django.urls import path, re_path
 from Student.views import index, IndexView
-from blog.views import has_perm
+from blog.views import has_perm, post_list, post_detail
+from config.views import links
 urlpatterns = [
     path('super_admin/', admin.site.urls),
     path('admin/', custom_site.urls),
     path(r'', index, name='index'),
-    path(r'has_perm/', index, name='index'),
-    path(r'web/', IndexView.as_view(), name='indexView')
+    path(r'has_perm/', has_perm, name='has_perm'),
+    path(r'web/', IndexView.as_view(), name='indexView'),
+    re_path(r'category/(?P<category_id>\d+)', post_list, name='category'),
+    path(r'index/', post_list, name='index/'),
+    re_path(r'tag/(?P<tag_id>\d+)', post_list, name='tag'),
+    path(r'links/', links, name='links'),
+    re_path(r'post/(?P<post_id>\d+).html', post_detail, name='post'),
 ]

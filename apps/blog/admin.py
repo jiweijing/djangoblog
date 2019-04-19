@@ -59,6 +59,7 @@ class PostAdmin(BaseOwnerAdmin):
         codename = get_permission_codename('add', opts)
         perm_code = "%s.%s" % (opts.app_label, codename)
         resp = requests.get(PERMISSION_API.format(request.user.username, perm_code))
+        print(resp.status_code)
         if resp.status_code == 200:
             return True
         else:
