@@ -17,7 +17,7 @@ from django.contrib import admin
 from .custom_site import custom_site
 from django.urls import path, re_path
 from Student.views import index, IndexView
-from blog.views import has_perm, post_list, post_detail
+from blog.views import has_perm, post_list, post_detail, MyView, PostDetailView, PostListView, CategoryView, TagView
 from config.views import links
 urlpatterns = [
     path('super_admin/', admin.site.urls),
@@ -26,8 +26,12 @@ urlpatterns = [
     path(r'has_perm/', has_perm, name='has_perm'),
     path(r'web/', IndexView.as_view(), name='indexView'),
     re_path(r'category/(?P<category_id>\d+)', post_list, name='category'),
-    path(r'index/', post_list, name='index/'),
     re_path(r'tag/(?P<tag_id>\d+)', post_list, name='tag'),
     path(r'links/', links, name='links'),
     re_path(r'post/(?P<post_id>\d+).html', post_detail, name='post'),
+    path('about/', MyView.as_view(), name='about'),
+    path(r'index/', PostListView.as_view(), name='index/'),
+    re_path(r'post1/(?P<post_id>\d+).html', PostDetailView.as_view(), name='post-detail'),
+    re_path(r'category1/(?P<category_id>\d+)', CategoryView.as_view(), name='category1'),
+    re_path(r'tag1/(?P<tag_id>\d+)', TagView.as_view(), name='tag1'),
 ]

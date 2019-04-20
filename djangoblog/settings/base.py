@@ -27,7 +27,7 @@ SECRET_KEY = '3cd^4ng$=*er@==@4r6+hd^2i5er6a-zi$((spokl_t=ic^)b0'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
